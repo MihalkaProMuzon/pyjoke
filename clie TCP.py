@@ -3,7 +3,7 @@ import socket
 # Создаем сокет
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-server_address = ('127.0.0.1', 52600)
+server_address = ('85.192.26.114', 52600)
 message = 'Это тестовое сообщение'
 
 try:
