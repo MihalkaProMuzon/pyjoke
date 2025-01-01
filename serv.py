@@ -36,8 +36,7 @@ class GameServer:
         pass     
         
     async def start_server(self):
-        print("Слушаемс...")
-        print("Слушаемс...")
+        print(f"Слушаемс... {LOCAL_ADDR}")
         self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
         
         asyncio.create_task(self.listen())
