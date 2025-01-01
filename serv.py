@@ -6,7 +6,7 @@ import json
 ### CONFIG
 
 CODER = "utf-8"
-LOCAL_ADDR = ('127.0.0.1', 35550)
+LOCAL_ADDR = ('85.192.26.114', 35550)
 
 
 COMMANDS = {
@@ -36,6 +36,7 @@ class GameServer:
         pass     
         
     async def start_server(self):
+        print("Слушаемс...")
         print("Слушаемс...")
         self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
         
