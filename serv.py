@@ -6,7 +6,7 @@ import json
 ### CONFIG
 
 CODER = "utf-8"
-LOCAL_ADDR = ('85.192.26.114', 52500)
+LOCAL_ADDR = ('10.66.66.1', 52500)
 #LOCAL_ADDR = ('127.0.0.1', 35550)
 
 
