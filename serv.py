@@ -104,7 +104,7 @@ class GameServer:
             self.sock.sendto(jencodeO(COMMANDS), addr)
             print_adv("Выслал комманды")
         if command[0] == 'update':
-            Updater.update_project()
+            Updater.update_project(command[1])
             
     
 
