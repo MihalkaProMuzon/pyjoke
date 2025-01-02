@@ -54,6 +54,7 @@ class GameServer:
     
     
     async def handle(self, datas):
+        print(" <-- handle")
         message, addr = datas
         command = decodeB(message).split(' ')
         print(f' -- {command}')
