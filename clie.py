@@ -10,7 +10,7 @@ COMMANDS_MESSAGE = 'c'
 CODER = "utf-8"
 
 LOCAL_ADDR = ('127.0.0.1', 52501)
-SERVR_ADDR = ('85.192.26.114', 52500)
+SERVR_ADDR = ('85.192.26.114', 52600)
 #SERVR_ADDR = ('127.0.0.1', 35550)
 
 
@@ -32,7 +32,7 @@ class GameClient:
         pass
     
     async def start_client(self):
-        self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR,remote_addr= SERVR_ADDR)  
+        self.sock = await asyncudp.create_socket(remote_addr= SERVR_ADDR)
         
         print("Запущен")
         await self.request_commands()
