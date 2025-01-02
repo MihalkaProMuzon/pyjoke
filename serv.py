@@ -58,9 +58,10 @@ def decodeB(str):
 
 
 class Updater:
-    def update_project(branch_name):
+    def update_project(branch_name = ''):
         try:
-            #subprocess.run(['git', 'checkout', branch_name], check=True)
+            if branch_name != '':
+                subprocess.run(['git', 'checkout', branch_name], check=True)
             subprocess.run(['git', 'pull'], check=True)
             
             print("Перезапуск программы...")
