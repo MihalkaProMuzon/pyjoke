@@ -13,7 +13,7 @@ CODER = "utf-8"
 LOCAL_ADDR = ('85.192.26.114', 52600)
 #LOCAL_ADDR = ('127.0.0.1', 52600)
 
-PROJ_VERSION = "v.main.5"
+PROJ_VERSION = "v.main.5 test brach"
 
 PYTHON_PATH = '../../python'
 
