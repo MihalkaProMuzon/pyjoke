@@ -27,7 +27,7 @@ COMMANDS = {
 #################################################################################
 ###                     ###
     ### POHG SERVER ###
-print(">> pohg server <<")
+print("\n\n>> pohg server <<")
 ###                     ###
 
 print_added = False
