@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import asyncudp
 import json
 
@@ -6,8 +7,8 @@ import json
 ### CONFIG
 
 CODER = "utf-8"
-LOCAL_ADDR = ('85.192.26.114', 52600)
-#LOCAL_ADDR = ('127.0.0.1', 35550)
+#LOCAL_ADDR = ('85.192.26.114', 52600)
+LOCAL_ADDR = ('127.0.0.1', 52600)
 
 
 COMMANDS = {
@@ -17,12 +18,32 @@ COMMANDS = {
 }
 
 
-
 #################################################################################
 ###                     ###
     ### POHG SERVER ###
 print(">> pohg server <<")
 ###                     ###
+
+print_added = False
+
+def print_adv(*text):
+    global print_added
+    print('\r', end= '')
+    print(*text)
+    print_added = True
+
+deb_candy = ['\\','|','/', '-']
+deb_candy_pos = 0
+def print_deb_candy():
+    global print_added, deb_candy_pos, deb_candy
+    if print_added:
+        print('')
+    
+    print_added = False
+    print('\r', end= '')
+    print(f" > {deb_candy[deb_candy_pos]}", end='')
+    deb_candy_pos+=1
+    deb_candy_pos = deb_candy_pos%4
 
 def jencodeO(object):
     return json.dumps(object, ensure_ascii=False).encode(CODER)
@@ -37,37 +58,36 @@ class GameServer:
         pass     
         
     async def start_server(self):
-        print(f"v.1")
-        print(f"Слушаемс... {LOCAL_ADDR}")
+        print_adv(f"v.3")
+        print_adv(f"Слушаемс... {LOCAL_ADDR}")
         self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
         
         asyncio.create_task(self.listen())
         
         while True:
-            print("Я сервер! ЛЯЛЯЛЯЛЯ")
-            await asyncio.sleep(2)
+            print_deb_candy()
+            await asyncio.sleep(0.2)
         
     async def listen(self):
         while True:
             datas = await self.sock.recvfrom()
-            print(datas[0], datas[1])
+            print_adv(datas[0], datas[1])
             await self.handle( datas )
     
     
     async def handle(self, datas):
-        print(" <-- handle")
         message, addr = datas
         command = decodeB(message).split(' ')
-        print(f' -- {command}')
+        print_adv(f' -- {command}')
         if command[0] == 'c':
             self.sock.sendto(jencodeO(COMMANDS), addr)
-            print("Выслал комманды")
+            print_adv("Выслал комманды")
             
     
 
 
 async def main():
-    print("Запуск сервера...")
+    print_adv("Запуск сервера...")
     _gs = GameServer()
     await _gs.start_server()
     

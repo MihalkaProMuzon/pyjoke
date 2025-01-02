@@ -10,8 +10,8 @@ COMMANDS_MESSAGE = 'c'
 CODER = "utf-8"
 
 LOCAL_ADDR = ('', 52601)
-SERVR_ADDR = ('85.192.26.114', 52600)
-#SERVR_ADDR = ('127.0.0.1', 35550)
+#SERVR_ADDR = ('85.192.26.114', 52600)
+SERVR_ADDR = ('127.0.0.1', 52600)
 
 
 #################################################################################
@@ -42,12 +42,7 @@ class GameClient:
     
     async def request_commands(self):
         self.sock.sendto(encodeS(COMMANDS_MESSAGE))
-        print("Попросил команды")
         data, addr = await self.sock.recvfrom()
-        print()
-        print(data)
-        print(addr)
-        print()
         data = jdecodeB(data)
         for k, v in data.items():
             print(f"  ~ {k} - {v}")
