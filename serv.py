@@ -43,8 +43,8 @@ class GameServer:
         asyncio.create_task(self.listen())
         
         while True:
-            #print("Я сервер! ЛЯЛЯЛЯЛЯ")
-            await asyncio.sleep(0.5)
+            print("Я сервер! ЛЯЛЯЛЯЛЯ")
+            await asyncio.sleep(2)
         
     async def listen(self):
         while True:
