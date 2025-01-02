@@ -1,5 +1,8 @@
 import asyncio
 import inspect
+import os
+import subprocess
+import sys
 import asyncudp
 import json
 
@@ -32,7 +35,7 @@ def print_adv(*text):
     print(*text)
     print_added = True
 
-deb_candy = ['\\','|','/', '-']
+deb_candy = ['\\','|','/', '—']
 deb_candy_pos = 0
 def print_deb_candy():
     global print_added, deb_candy_pos, deb_candy
@@ -52,6 +55,20 @@ def encodeS(str):
 def decodeB(str):
     return bytes.decode(str, CODER)
 
+
+class Updater:
+    def update_project(branch_name):
+        try:
+            #subprocess.run(['git', 'checkout', branch_name], check=True)
+            subprocess.run(['git', 'pull'], check=True)
+            
+            print("Перезапуск программы...")
+            os.execv(sys.executable, ['python'] + sys.argv)
+            
+        except subprocess.CalledProcessError as e:
+            print(f"Ошибка при обновлении: {e}")
+        except Exception as e:
+            print(f"Произошла ошибка при обновлении: {e}")
 
 class GameServer:
     def __init__(self):
@@ -82,6 +99,8 @@ class GameServer:
         if command[0] == 'c':
             self.sock.sendto(jencodeO(COMMANDS), addr)
             print_adv("Выслал комманды")
+        if command[0] == 'update':
+            Updater.update_project()
             
     
 
