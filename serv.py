@@ -15,6 +15,8 @@ LOCAL_ADDR = ('85.192.26.114', 52600)
 
 PROJ_VERSION = "v.updater-ficha.1"
 
+PYTHON_PATH = '../../python'
+
 COMMANDS = {
     'create_room': u"Создать комнату",
     'rooms': u"Показать все комнаты",
@@ -65,7 +67,7 @@ class Updater:
             subprocess.run(['git', 'pull'], check=True)
             
             print("Перезапуск программы...")
-            os.execv(sys.executable, ['python'] + sys.argv)
+            os.execv(sys.executable, [PYTHON_PATH] + sys.argv)
             
         except subprocess.CalledProcessError as e:
             print(f"Ошибка при обновлении: {e}")
