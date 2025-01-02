@@ -27,7 +27,7 @@ COMMANDS = {
 #################################################################################
 ###                     ###
     ### POHG SERVER ###
-print("\n\n>> pohg server <<")
+print(f"\n\n>> pohg server [{PROJ_VERSION}] <<" )
 ###                     ###
 
 print_added = False
@@ -79,7 +79,6 @@ class GameServer:
         pass     
         
     async def start_server(self):
-        print_adv(f"{PROJ_VERSION}")
         print_adv(f"Слушаемс... {LOCAL_ADDR}")
         self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
         
