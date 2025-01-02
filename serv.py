@@ -13,6 +13,7 @@ CODER = "utf-8"
 LOCAL_ADDR = ('85.192.26.114', 52600)
 #LOCAL_ADDR = ('127.0.0.1', 52600)
 
+PROJ_VERSION = "v.updater-ficha.1"
 
 COMMANDS = {
     'create_room': u"Создать комнату",
@@ -75,7 +76,7 @@ class GameServer:
         pass     
         
     async def start_server(self):
-        print_adv(f"v.3")
+        print_adv(f"{PROJ_VERSION}")
         print_adv(f"Слушаемс... {LOCAL_ADDR}")
         self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
         
