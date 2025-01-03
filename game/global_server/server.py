@@ -1,62 +1,34 @@
 import asyncio
-import inspect
+import enum
 import os
 import subprocess
 import sys
 import asyncudp
-import json
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from helper import *
 
 #################################################################################
 ### CONFIG
 
-CODER = "utf-8"
-LOCAL_ADDR = ('85.192.26.114', 52600)
-#LOCAL_ADDR = ('127.0.0.1', 52600)
-
+#LOCAL_ADDR = ('85.192.26.114', 52600)
+LOCAL_ADDR = ('127.0.0.1', 52600)
 PROJ_VERSION = "v.main.5"
-
 PYTHON_PATH = '../../python'
-
-COMMANDS = {
-    'create_room': u"Создать комнату",
-    'rooms': u"Показать все комнаты",
-    'c': u'Список комманд'
-}
-
+GREETINGS_COMMAND = '#g'
 
 #################################################################################
-###                     ###
-    ### POHG SERVER ###
 print(f"\n\n>> pohg server [{PROJ_VERSION}] <<" )
-###                     ###
+#################################################################################
 
-print_added = False
 
-def print_adv(*text):
-    global print_added
-    print('\r', end= '')
-    print(*text)
-    print_added = True
-
-deb_candy = ['\\','|','/', '—']
-deb_candy_pos = 0
-def print_deb_candy():
-    global print_added, deb_candy_pos, deb_candy
-    if print_added:
-        print('')
-    
-    print_added = False
-    print('\r', end= '')
-    print(f" > {deb_candy[deb_candy_pos]}", end='')
-    deb_candy_pos+=1
-    deb_candy_pos = deb_candy_pos%4
-
-def jencodeO(object):
-    return json.dumps(object, ensure_ascii=False).encode(CODER)
-def encodeS(str):
-    return str.encode(CODER)
-def decodeB(str):
-    return bytes.decode(str, CODER)
+# Комманды, высылаемые клиенту
+@enum.unique
+class Commands(enum.Enum):
+    greetings = 'Приветствие от сервера'
+    create_room = 'Встать в очередь (arg1 = моё имя)'
+    get_rooms = 'Показать очередь'
+    connect_room = 'Присоедениться к игроку (arg1 = имя игрока, arg2 = моё имя)'
 
 
 class Updater:
@@ -74,13 +46,17 @@ class Updater:
         except Exception as e:
             print(f"Произошла ошибка при обновлении: {e}")
 
+
+
 class GameServer:
     def __init__(self):
-        pass     
-        
+        self.rooms = {}
+        self.uid = 1
+    
+    ### Инициализация сервера    
     async def start_server(self):
         print_adv(f"Слушаемс... {LOCAL_ADDR}")
-        self.sock = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
+        self.sock_udp = await asyncudp.create_socket(local_addr= LOCAL_ADDR)
         
         asyncio.create_task(self.listen())
         
@@ -88,27 +64,39 @@ class GameServer:
             print_deb_candy()
             await asyncio.sleep(0.2)
         
+    ### Корутина прослушки сокета
     async def listen(self):
         while True:
-            datas = await self.sock.recvfrom()
+            datas = await self.sock_udp.recvfrom()
             print_adv(datas[0], datas[1])
             await self.handle( datas )
     
-    
+    ### Обработка комманд
     async def handle(self, datas):
         message, addr = datas
         command = decodeB(message).split(' ')
         print_adv(f' -- {command}')
-        if command[0] == 'c':
-            self.sock.sendto(jencodeO(COMMANDS), addr)
-            print_adv("Выслал комманды")
-        if command[0] == 'update':
+        
+        # Обновить сервер                        
+        if command[0] == '#update':
             branch = ''
             if len(command) > 1:
                 branch = command[1]
             Updater.update_project(branch)
             
-    
+        # Создать комнату
+        if command[0] == Commands.create_room.name:
+            pass
+            
+        # Выслать список комнат
+        if command[0] == Commands.get_rooms.name:
+            pass
+        
+        # Выслать список комнат
+        if command[0] == Commands.g.name:
+            pass
+            
+
 
 
 async def main():
