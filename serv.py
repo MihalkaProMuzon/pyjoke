@@ -21,6 +21,7 @@ COMMANDS = {
     'create_room': u"Создать комнату",
     'rooms': u"Показать все комнаты",
     'c': u'Список комманд'
+    'v': u'Версия сервера'
 }
 
 
@@ -102,6 +103,10 @@ class GameServer:
         if command[0] == 'c':
             self.sock.sendto(jencodeO(COMMANDS), addr)
             print_adv("Выслал комманды")
+        
+        if command[0] == 'v':
+            self.sock.sendto(encodeS(PROJ_VERSION), addr)
+        
         if command[0] == 'update':
             branch = ''
             if len(command) > 1:
