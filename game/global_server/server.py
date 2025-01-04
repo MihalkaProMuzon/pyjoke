@@ -95,7 +95,7 @@ class GameServer:
             # Проверка связи
             if comm_message == Commands.test1.name:
                 print("test1")
-                answer("Server response1 o-O", addr)
+                answer("Server response1 o-O")
             if comm_message == Commands.test2.name:
                 print("test2")
                 answer("Response2 from server ;)")
