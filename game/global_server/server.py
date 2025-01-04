@@ -80,13 +80,12 @@ class GameServer:
         
         # Комманды, ждущие ответ
         if command[0][0] == "@":
-            comm = command[0].split(' ')
-            comm_id = int(comm[0][1:])
-            comm_message = comm[1]
+            comm_id = int(command[0][1:])
+            comm_message = command[1]
             
             # Приветсвие от сервера
             if comm_message == Commands.greetings.name:
-                self.sock_udp.sendto(encodeS(f"{comm} -≡ Server [{PROJ_VERSION}]"),addr)
+                self.sock_udp.sendto(encodeS(f"{command[0]} -≡ Server [{PROJ_VERSION}]"),addr)
                 return
         
         
