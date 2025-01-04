@@ -14,8 +14,7 @@ from helper import *
 LOCAL_ADDR = ('85.192.26.114', 52600)
 #LOCAL_ADDR = ('127.0.0.1', 52600)
 PROJ_VERSION = "v.main.5"
-PYTHON_PATH = '../../../python'
-GREETINGS_COMMAND = '#g'
+PYTHON_PATH = '../../../../python'
 
 #################################################################################
 print(f"\n\n>> pohg server [{PROJ_VERSION}] <<" )
