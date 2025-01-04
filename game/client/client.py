@@ -91,7 +91,8 @@ class GameClient:
         while True:
             await asyncio.sleep(0.25)
             vvod = await asyncio.get_event_loop().run_in_executor(None, input, " --> ") + ' '
-            self.messanger.push_command( vvod[1:], self.simple_message_callback )
+            if vvod != '' and vvod != ' ':
+                self.messanger.push_command( vvod, self.simple_message_callback )
     #******************************************************************************
 
     def simple_message_callback(self, response):

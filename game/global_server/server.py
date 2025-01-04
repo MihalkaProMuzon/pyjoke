@@ -101,11 +101,12 @@ class GameServer:
                 answer("Response2 from server ;)")
                 
             if comm_message == Commands.update.name:
+                answer("server confirm update command")
                 branch = ''
                 if len(command) > 2:
                     branch = command[2]
                 Updater.update_project(branch)
-                answer("server confirm update command")
+                
                 
             
         
