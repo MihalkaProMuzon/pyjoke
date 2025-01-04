@@ -89,14 +89,16 @@ class GameClient:
         await self.inpput_task
             
     def do_server_greetings(self):
-        pass
-        #self.messanger.push_command(GREETINGS_COMMAND,self.simple_message_callback)
+        self.messanger.push_command(GREETINGS_COMMAND,self.simple_message_callback)
         
     async def handle_input(self):
         while True:
             await asyncio.sleep(0.25)
-            vvod = await asyncio.get_event_loop().run_in_executor(None, input, " --> ")
-            self.messanger.push_command( encodeS(vvod) )
+            vvod = await asyncio.get_event_loop().run_in_executor(None, input, " --> ") + ' '
+            if vvod[0] == "#":
+                self.messanger.push_command( encodeS(vvod[1:]) )
+            else:
+                self.sock.sendto( encodeS(vvod) )
     #******************************************************************************
 
     def simple_message_callback(self, message):
