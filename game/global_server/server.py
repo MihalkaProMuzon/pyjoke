@@ -29,6 +29,8 @@ class Commands(enum.Enum):
     create_room = 'Встать в очередь (arg1 = моё имя)'
     get_rooms = 'Показать очередь'
     connect_room = 'Присоедениться к игроку (arg1 = имя игрока, arg2 = моё имя)'
+    test1 = 'Проверка связи 1'
+    test2 = 'Проверка связи 2'
 
 
 class Updater:
@@ -92,9 +94,15 @@ class GameServer:
         if command[0] == Commands.get_rooms.name:
             pass
         
-        # Выслать список комнат
-        if command[0] == Commands.g.name:
-            pass
+        # Приветсвие от сервера
+        if command[0] == Commands.greetings.name:
+            self.sock_udp.sendto(encodeS(f" -≡ Server [{PROJ_VERSION}]"),addr)
+            
+        # Проверка связи
+        if command[0] == Commands.test1.name:
+            self.sock_udp.sendto(encodeS(f" Server response1 o-O"),addr)
+        if command[0] == Commands.test2.name:
+            self.sock_udp.sendto(encodeS(f" Response2 from server ;)"),addr)
             
 
 
