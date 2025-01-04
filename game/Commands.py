@@ -2,8 +2,8 @@ import asyncio
 import time
 from helper import *
 
-COMMANDS_REPEAT_TIME = 200
-COMMANDS_RECHECK_TIME = 0.2
+COMMANDS_REPEAT_TIME = 400
+COMMANDS_RECHECK_TIME = 0.1
 
 class Messanger():
     def __init__(self, sock):
@@ -13,17 +13,15 @@ class Messanger():
         self.running = True
     
         handle_response_task = asyncio.create_task( self.handle_responces() )
-        handle_response_task = asyncio.create_task( self.handle_responces() )
+        handle_messages_task = asyncio.create_task( self.handle_messages() )
     
     async def handle_messages(self):
         while self.running:
             data, addr = await self.sock.recvfrom()
-            print(f" < get {data}")
-            response = decodeB(data).split(' ')
-            print(f"  << {response}")
-            comm_id = int(response[0][1:])
+            comm, response = decodeB(data).split(' ', 1)
+            comm_id = int(comm[1:])
             if comm_id in self.process_commands:
-                self.process_commands[comm_id]['callback'](response[1])
+                self.process_commands[comm_id]['callback'](response)
                 del self.process_commands[comm_id]
     
     # Повторная отправка комманд не получивших ответа
@@ -32,7 +30,7 @@ class Messanger():
             timenow = time.monotonic() * 1000
             for comm_id, comm in self.process_commands.items():
                 if timenow > comm['repeat_at']:
-                    print(f" > {comm['repeat']} repeat comm {comm_id}")
+                    #print(f" > {comm['repeat']} repeat comm {comm_id}")
                     comm['repeat'] = comm['repeat'] + 1
                     comm['push']()
                     
@@ -45,13 +43,11 @@ class Messanger():
             self.comm_id = 1
         
         push_data =  encodeS( f"@{self.comm_id} {data}" )
-        def push_def():
-            print("  _+_FFFFFFFFFFFFFFFFFFFFFFFFFFF")
-            self.sock.sendto(push_data)
-        push = push_def
+        
+        push = lambda: self.sock.sendto(push_data)
         
         self.process_commands[self.comm_id] = {
-            'repeat_at': time.monotonic() + COMMANDS_REPEAT_TIME,
+            'repeat_at': time.monotonic()*1000 + COMMANDS_REPEAT_TIME,
             'repeat': 0,
             'push': push,
             'callback': callback_handler

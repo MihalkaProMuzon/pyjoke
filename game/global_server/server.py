@@ -11,9 +11,9 @@ from helper import *
 #################################################################################
 ### CONFIG
 
-LOCAL_ADDR = ('85.192.26.114', 52600)
-#LOCAL_ADDR = ('127.0.0.1', 52600)
-PROJ_VERSION = "v.commands-upgrade.1"
+#LOCAL_ADDR = ('85.192.26.114', 52600)
+LOCAL_ADDR = ('127.0.0.1', 52600)
+PROJ_VERSION = "v.commands-upgrade.2"
 PYTHON_PATH = '../../../../python'
 
 #################################################################################
@@ -76,17 +76,29 @@ class GameServer:
     def handle(self, datas):
         message, addr = datas
         command = decodeB(message).split(' ')
-        print_adv(f' -- {command}')
+        print_adv(f' ---> {command}')
         
         # Комманды, ждущие ответ
         if command[0][0] == "@":
             comm_id = int(command[0][1:])
             comm_message = command[1]
             
+            def answer(message, addr):
+                self.sock_udp.sendto( encodeS( f"{command[0]} {message}" ), addr)
+            
             # Приветсвие от сервера
             if comm_message == Commands.greetings.name:
-                self.sock_udp.sendto(encodeS(f"{command[0]} -≡ Server [{PROJ_VERSION}]"),addr)
+                print("greetings!")
+                answer("-≡ Server [{PROJ_VERSION}]", addr)
                 return
+        
+            # Проверка связи
+            if comm_message == Commands.test1.name:
+                print("test1")
+                answer("Server response1 o-O", addr)
+            if comm_message == Commands.test2.name:
+                print("test2")
+                answer("Response2 from server ;)", addr)
         
         
         # Комманды не требующие ответа                      
@@ -105,11 +117,7 @@ class GameServer:
         if command[0] == Commands.get_rooms.name:
             pass        
             
-        # Проверка связи
-        if command[0] == Commands.test1.name:
-            self.sock_udp.sendto(encodeS(f" Server response1 o-O"),addr)
-        if command[0] == Commands.test2.name:
-            self.sock_udp.sendto(encodeS(f" Response2 from server ;)"),addr)
+        
             
     #******************************************************************************
 

@@ -19,8 +19,8 @@ GREETINGS_COMMAND = 'greetings'
 CODER = "utf-8"
 
 LOCAL_ADDR = ('', 52601)
-SERVER_ADDR = ('85.192.26.114', 52600)
-#SERVER_ADDR = ('127.0.0.1', 52600)
+#SERVER_ADDR = ('85.192.26.114', 52600)
+SERVER_ADDR = ('127.0.0.1', 52600)
 
 
 #################################################################################
@@ -79,14 +79,10 @@ class GameClient:
         self.messanger = Messanger(self.sock)
     
         self.reprint_face()
-        self.messanger_task = asyncio.create_task(
-            self.messanger.handle_messages()
-        )
-        self.inpput_task = asyncio.create_task(
-            self.handle_input()
-        )
+        self.input_task = asyncio.create_task(self.handle_input())
         self.do_server_greetings()
-        await self.inpput_task
+        
+        await self.input_task
             
     def do_server_greetings(self):
         self.messanger.push_command(GREETINGS_COMMAND,self.simple_message_callback)
@@ -96,14 +92,14 @@ class GameClient:
             await asyncio.sleep(0.25)
             vvod = await asyncio.get_event_loop().run_in_executor(None, input, " --> ") + ' '
             if vvod[0] == "#":
-                self.messanger.push_command( encodeS(vvod[1:]) )
+                self.messanger.push_command( vvod[1:], self.simple_message_callback )
             else:
                 self.sock.sendto( encodeS(vvod) )
     #******************************************************************************
 
-    def simple_message_callback(self, message):
+    def simple_message_callback(self, response):
         self.clear_log()
-        self.add_log_print(decodeB(message))
+        self.add_log_print(response)
 
 
 #################################################################################
