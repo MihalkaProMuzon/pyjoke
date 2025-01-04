@@ -30,6 +30,7 @@ class Commands(enum.Enum):
     connect_room = 'Присоедениться к игроку (arg1 = имя игрока, arg2 = моё имя)'
     test1 = 'Проверка связи 1'
     test2 = 'Проверка связи 2'
+    update = 'Обновить сервер'
 
 
 class Updater:
@@ -83,13 +84,13 @@ class GameServer:
             comm_id = int(command[0][1:])
             comm_message = command[1]
             
-            def answer(message, addr):
+            def answer(message):
                 self.sock_udp.sendto( encodeS( f"{command[0]} {message}" ), addr)
             
             # Приветсвие от сервера
             if comm_message == Commands.greetings.name:
                 print("greetings!")
-                answer("-≡ Server [{PROJ_VERSION}]", addr)
+                answer("-≡ Server [{PROJ_VERSION}]")
         
             # Проверка связи
             if comm_message == Commands.test1.name:
@@ -97,24 +98,15 @@ class GameServer:
                 answer("Server response1 o-O", addr)
             if comm_message == Commands.test2.name:
                 print("test2")
-                answer("Response2 from server ;)", addr)
-        
-        
-        # Комманды не требующие ответа                      
-        if command[0] == '#update':
-            branch = ''
-            if len(command) > 1:
-                branch = command[1]
-            Updater.update_project(branch)
-            return
-            
-        # Создать комнату
-        if command[0] == Commands.create_room.name:
-            pass
-            
-        # Выслать список комнат
-        if command[0] == Commands.get_rooms.name:
-            pass        
+                answer("Response2 from server ;)")
+                
+            if comm_message == Commands.update.name:
+                branch = ''
+                if len(command) > 2:
+                    branch = command[2]
+                Updater.update_project(branch)
+                answer("server confirm update command")
+                
             
         
             

@@ -32,7 +32,11 @@ class Messanger():
                 if timenow > comm['repeat_at']:
                     #print(f" > {comm['repeat']} repeat comm {comm_id}")
                     comm['repeat'] = comm['repeat'] + 1
+                    if comm['repeat'] > 30:
+                        print(" [ответ от комманды не получен] ")
+                        del self.process_commands[comm_id]
                     comm['push']()
+                    
                     
             await asyncio.sleep(COMMANDS_RECHECK_TIME)
         
