@@ -90,7 +90,6 @@ class GameServer:
             if comm_message == Commands.greetings.name:
                 print("greetings!")
                 answer("-≡ Server [{PROJ_VERSION}]", addr)
-                return
         
             # Проверка связи
             if comm_message == Commands.test1.name:
