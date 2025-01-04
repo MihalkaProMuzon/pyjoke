@@ -9,6 +9,7 @@ import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from helper import *
+from Commands import Messanger
 
 #################################################################################
 ### CLIENT CONFIG
@@ -24,14 +25,11 @@ SERVER_ADDR = ('85.192.26.114', 52600)
 
 #################################################################################
 
-
-
-
-
 class GameClient:
     def __init__(self):
         self._log_stats = {}
         self._log_text = ''
+        self.messanger: Messanger = None
         
     # Печать статистик и всего лога
     def reprint_face(self):
@@ -73,57 +71,58 @@ class GameClient:
     # Очистить лог
     def clear_log(self):
         self._log_text = ''
-    
-    
-    
+    #******************************************************************************
     
     async def start_client(self):
         self.sock = await asyncudp.create_socket(remote_addr=SERVER_ADDR)
     
-        self.reprint_face()
-        self.handle_messages_task = asyncio.create_task(self.handle_messages())
-        self.handle_inpout_task = asyncio.create_task(self.handle_input())
-        await asyncio.gather(
-            self.handle_messages_task, 
-            self.handle_inpout_task,
-            self.do_server_greetings()
-        )
-        
+        self.messanger = Messanger(self.sock)
     
-    async def do_server_greetings(self):
-        self.sock.sendto(encodeS(GREETINGS_COMMAND))
+        self.reprint_face()
+        self.messanger_task = asyncio.create_task(
+            self.messanger.handle_messages()
+        )
+        self.inpput_task = asyncio.create_task(
+            self.handle_input()
+        )
+        self.do_server_greetings()
+        await self.inpput_task
+            
+    def do_server_greetings(self):
+        pass
+        #self.messanger.push_command(GREETINGS_COMMAND,self.simple_message_callback)
         
     async def handle_input(self):
         while True:
             await asyncio.sleep(0.25)
             vvod = await asyncio.get_event_loop().run_in_executor(None, input, " --> ")
-            message = encodeS(vvod)
-            self.sock.sendto(message)
-            
-    async def handle_messages(self):
-        while True:
-            data, addr = await self.sock.recvfrom()
-            self.clear_log()
-            self.add_log_print(decodeB(data))
+            self.messanger.push_command( encodeS(vvod) )
+    #******************************************************************************
+
+    def simple_message_callback(self, message):
+        self.clear_log()
+        self.add_log_print(decodeB(message))
 
 
-
-#******************************************************************************
-pygame.init()
-screen = pygame.display.set_mode((640, 480))
-pygame.display.set_caption("Asyncio UDP и Pygame")
-clock = pygame.time.Clock()
-
-
+#################################################################################
 
 # Основной цикл Pygame
 async def game():
+    x = 0
+    y = 0
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+    
+    pygame.init()
+    screen = pygame.display.set_mode((640, 480))
+    pygame.display.set_caption("Терминал .Pohg")
+    clock = pygame.time.Clock()
+    
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
-                pygame.display.quit()
+                # Добавить бы корректную остановку всего
+                running = False         
 
         screen.fill((0, 0, 0))
         anim = math.cos(pygame.time.get_ticks() *0.005)
@@ -136,12 +135,13 @@ async def game():
         await asyncio.sleep(0)
 
 
-#******************************************************************************
+#################################################################################
+
 async def main():
-    _gc = GameClient()
+    client = GameClient()
     await asyncio.gather(
         game(),
-        _gc.start_client()   
+        client.start_client()
     )
 
 asyncio.run(main())

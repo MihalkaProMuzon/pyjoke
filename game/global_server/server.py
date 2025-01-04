@@ -70,20 +70,33 @@ class GameServer:
         while True:
             datas = await self.sock_udp.recvfrom()
             print_adv(datas[0], datas[1])
-            await self.handle( datas )
+            self.handle( datas )
     
     ### Обработка комманд
-    async def handle(self, datas):
+    def handle(self, datas):
         message, addr = datas
         command = decodeB(message).split(' ')
         print_adv(f' -- {command}')
         
-        # Обновить сервер                        
+        # Комманды, ждущие ответ
+        if command[0][0] == "@":
+            comm = command[0].split(' ')
+            comm_id = int(comm[0][1:])
+            comm_message = comm[1]
+            
+            # Приветсвие от сервера
+            if comm_message == Commands.greetings.name:
+                self.sock_udp.sendto(encodeS(f"{comm} -≡ Server [{PROJ_VERSION}]"),addr)
+                return
+        
+        
+        # Комманды не требующие ответа                      
         if command[0] == '#update':
             branch = ''
             if len(command) > 1:
                 branch = command[1]
             Updater.update_project(branch)
+            return
             
         # Создать комнату
         if command[0] == Commands.create_room.name:
@@ -91,11 +104,7 @@ class GameServer:
             
         # Выслать список комнат
         if command[0] == Commands.get_rooms.name:
-            pass
-        
-        # Приветсвие от сервера
-        if command[0] == Commands.greetings.name:
-            self.sock_udp.sendto(encodeS(f" -≡ Server [{PROJ_VERSION}]"),addr)
+            pass        
             
         # Проверка связи
         if command[0] == Commands.test1.name:
@@ -103,7 +112,7 @@ class GameServer:
         if command[0] == Commands.test2.name:
             self.sock_udp.sendto(encodeS(f" Response2 from server ;)"),addr)
             
-
+    #******************************************************************************
 
 
 async def main():

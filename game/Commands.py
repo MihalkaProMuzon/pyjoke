@@ -1,32 +1,59 @@
+import asyncio
+import time
 from helper import *
 
-class MessageProcess():
-    def __init__(self, sock, process_def):
+COMMANDS_REPEAT_TIME = 200
+COMMANDS_RECHECK_TIME = 0.2
+
+class Messanger():
+    def __init__(self, sock):
         self.sock = sock
-        self._process_def = process_def
-        self.wait_respoce = False
-        if responce_def:
-            self._responce_def = responce_def
-            self.wait_respoce = True
+        self.process_commands = {}
+        self.comm_id = 0
+        self.running = True
+    
+        handle_response_task = asyncio.create_task( self.handle_responces() )
+        handle_response_task = asyncio.create_task( self.handle_responces() )
+    
+    async def handle_messages(self):
+        while self.running:
+            data, addr = await self.sock.recvfrom()
+            print(f" < get {data}")
+            response = decodeB(data).split(' ')
+            print(f"  << {response}")
+            comm_id = int(response[0][1:])
+            if comm_id in self.process_commands:
+                self.process_commands[comm_id]['callback'](response[1])
+                del self.process_commands[comm_id]
+    
+    # Повторная отправка комманд не получивших ответа
+    async def handle_responces(self):
+        while self.running:
+            timenow = time.monotonic() * 1000
+            for comm_id, comm in self.process_commands.items():
+                if timenow > comm['repeat_at']:
+                    print(f" > {comm['repeat']} repeat comm {comm_id}")
+                    comm['repeat'] = comm['repeat'] + 1
+                    comm['push']()
+                    
+            await asyncio.sleep(COMMANDS_RECHECK_TIME)
         
+    
+    def push_command(self, data, callback_handler):
+        self.comm_id += 1
+        if self.comm_id > 32000:
+            self.comm_id = 1
         
-    def process():
-        pass
-    
-class Command():
-    def __init__(self, text, process: function, responce: function = None):
-        self.text = text
-        self._process_handler = process
-        self._responce_handler = responce
-        self.wait_response = bool(responce)
-    
-    async def process(self, sock, *args, **kwargs):
-        await self._process_handler(*args, **kwargs)
-        if self.wait_response:
-            data, addr = await sock.recvfrom()
-            self._responce_handler(data, addr, *args, **kwargs)
-    
-client_commands = {}
-client_commands['greeting'] = Command('Приветствие от сервера',process=
-    lambda: 
-        )
+        push_data =  encodeS( f"@{self.comm_id} {data}" )
+        def push_def():
+            print("  _+_FFFFFFFFFFFFFFFFFFFFFFFFFFF")
+            self.sock.sendto(push_data)
+        push = push_def
+        
+        self.process_commands[self.comm_id] = {
+            'repeat_at': time.monotonic() + COMMANDS_REPEAT_TIME,
+            'repeat': 0,
+            'push': push,
+            'callback': callback_handler
+        }
+        push()
