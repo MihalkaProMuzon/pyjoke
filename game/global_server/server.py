@@ -90,7 +90,7 @@ class GameServer:
             # Приветсвие от сервера
             if comm_message == Commands.greetings.name:
                 print("greetings!")
-                answer("-≡ Server [{PROJ_VERSION}]")
+                answer(f"-≡ Server [{PROJ_VERSION}]")
         
             # Проверка связи
             if comm_message == Commands.test1.name:
