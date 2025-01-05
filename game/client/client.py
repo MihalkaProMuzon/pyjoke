@@ -75,6 +75,9 @@ class GameClient:
     
     async def start_client(self):
         self.sock = await asyncudp.create_socket(remote_addr=SERVER_ADDR)
+        self.sock_addr, self.sock_port = self.sock.getsockname()
+        self.add_stat('sock', f"socket --E {self.sock_addr}:{self.sock_port}")
+    
     
         self.messanger = Messanger(self.sock)
     
