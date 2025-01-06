@@ -25,8 +25,8 @@ async def main():
     cvadrat = Racket(game)
     
     while True:
-        game.store_events()
-        for event in game.events:
+        game.store_pygame_events()
+        for event in game.pygame_events:
             if event.type == pygame.QUIT:
                 return
         

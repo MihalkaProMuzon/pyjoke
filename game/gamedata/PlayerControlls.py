@@ -1,9 +1,7 @@
 import pygame
-from gamedata.Game import Game
-
 
 class PlayerControlls:
-    def __init__(self, game: Game):
+    def __init__(self, game):
         self.left = False
         self.right = False
         self.up = False
@@ -11,7 +9,7 @@ class PlayerControlls:
         self.game = game
             
     def handle_controlls(self):
-        for event in self.game.events:
+        for event in self.game.pygame_events:
             if event.type == pygame.KEYDOWN:
                 match event.key:
                     case pygame.K_LEFT:
