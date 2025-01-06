@@ -13,7 +13,7 @@ from helper import *
 
 LOCAL_ADDR = ('85.192.26.114', 52600)
 #LOCAL_ADDR = ('127.0.0.1', 52600)
-PROJ_VERSION = "v.DO-game-setup.3"
+PROJ_VERSION = "v.main.8"
 PYTHON_PATH = '../../../../python'
 
 #################################################################################
