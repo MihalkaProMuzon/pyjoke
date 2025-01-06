@@ -1,15 +1,13 @@
 import asyncio
-import math
 import os
 import sys
 import asyncudp
-import json
 
-import pygame
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from helper import *
 from Commands import Messanger
+from gamedata.Game import Game
 
 #################################################################################
 ### CLIENT CONFIG
@@ -25,7 +23,7 @@ SERVER_ADDR = ('85.192.26.114', 52600)
 
 #################################################################################
 
-class GameClient:
+class UPDClient:
     def __init__(self):
         self._log_stats = {}
         self._log_text = ''
@@ -71,6 +69,7 @@ class GameClient:
     # Очистить лог
     def clear_log(self):
         self._log_text = ''
+        
     #******************************************************************************
     
     async def start_client(self):
@@ -98,51 +97,21 @@ class GameClient:
                 self.clear_log()
                 self.add_log_print(' ... ')
                 self.messanger.push_command( vvod, self.simple_message_callback )
+                
     #******************************************************************************
 
     def simple_message_callback(self, response):
         self.clear_log()
         self.add_log_print(response)
 
-
-#################################################################################
-
-# Основной цикл Pygame
-async def game():
-    x = 0
-    y = 0
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
-    
-    pygame.init()
-    screen = pygame.display.set_mode((640, 480))
-    pygame.display.set_caption("Терминал .Pohg")
-    clock = pygame.time.Clock()
-    
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                # Добавить бы корректную остановку всего
-                running = False         
-
-        screen.fill((0, 0, 0))
-        anim = math.cos(pygame.time.get_ticks() *0.005)
-        center = ((320-50) + 100*anim, 240)
-        
-        pygame.draw.circle(screen, (255, 0, 0), center, 50)
-        pygame.display.flip()
-
-        clock.tick(60) # Ограничение FPS
-        await asyncio.sleep(0)
-
-
 #################################################################################
 
 async def main():
-    client = GameClient()
+    udpclient = UPDClient()
+    game = Game()
     await asyncio.gather(
-        game(),
-        client.start_client()
+        game.start_game(),
+        udpclient.start_client()
     )
 
 asyncio.run(main())
