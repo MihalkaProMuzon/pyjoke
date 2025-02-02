@@ -25,12 +25,12 @@ async def main():
     cvadrat = Racket(game)
     
     while True:
-        game.store_pygame_events()
-        for event in game.pygame_events:
+        game._store_pygame_events()
+        for event in game.__pygame_events:
             if event.type == pygame.QUIT:
                 return
         
-        game.player_controlls.handle_controlls()
+        game.__player_controlls.handle_controlls()
     
         screen.fill( BG_COL )
         

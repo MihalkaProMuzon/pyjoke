@@ -10,15 +10,15 @@ class Racket:
 
     def update(self):
         # Update pos
-        if self.game.player_controlls.right:
+        if self.game.__player_controlls.right:
             self.pos_x += self.speed
-        if self.game.player_controlls.left:
+        if self.game.__player_controlls.left:
             self.pos_x -= self.speed
-        if self.game.player_controlls.up:
+        if self.game.__player_controlls.up:
             self.pos_y -= self.speed
-        if self.game.player_controlls.down:
+        if self.game.__player_controlls.down:
             self.pos_y += self.speed
 
 
     def draw(self):
-        self.game.pygame.draw.rect(self.game.screen,(255,255,255), (self.pos_x, self.pos_y, 50, 50),100, 3)
+        self.game.pygame.draw.rect(self.game._screen,(255,255,255), (self.pos_x, self.pos_y, 50, 50),100, 3)
